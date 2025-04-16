@@ -588,7 +588,7 @@ const os_1 = __importDefault(__nccwpck_require__(2037));
 const core = __importStar(__nccwpck_require__(2186));
 class Input {
     static get testModes() {
-        return ['all', 'playmode', 'editmode', 'standalone', 'custom'];
+        return ['all', 'playmode', 'editmode', 'standalone', 'custom', 'customstandalone'];
     }
     static isValidFolderName(folderName) {
         const validFolderName = new RegExp(/^(\.|\.\/)?(\.?[\w~]+([ _-]?[\w~]+)*\/?)*$/);
