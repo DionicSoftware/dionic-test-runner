@@ -6,7 +6,7 @@ import * as core from '@actions/core';
 
 class Input {
   static get testModes() {
-    return ['all', 'playmode', 'editmode', 'standalone', 'customStandalone'];
+    return ['all', 'playmode', 'editmode', 'standalone', 'customstandalone'];
   }
 
   static isValidFolderName(folderName) {
