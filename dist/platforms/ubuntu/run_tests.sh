@@ -7,6 +7,20 @@
 UNITY_PROJECT_PATH="$GITHUB_WORKSPACE/$PROJECT_PATH"
 echo "Using project path \"$UNITY_PROJECT_PATH\"."
 
+BUILD_PATH="build"
+BUILD_NAME="StandaloneLinux64"
+BUILD_FILE="$BUILD_NAME"
+BUILD_PATH_FULL="$GITHUB_WORKSPACE/$BUILD_PATH" # TODO: pass the $BUILD_PATH from build job to here instead of its default value
+CUSTOM_BUILD_PATH="$BUILD_PATH_FULL/$BUILD_FILE"
+echo "Using build path \"$BUILD_PATH_FULL\"."
+
+
+if [ ! -e "$BUILD_PATH_FULL" ]; then
+  echo "Couldn't find build from the build job! Aborting...."
+  exit 420
+fi
+
+
 #
 # Set and display the artifacts path
 #
@@ -166,58 +180,19 @@ ls -alh "$UNITY_PROJECT_PATH"
 # Testing for each platform
 #
 for platform in ${TEST_PLATFORMS//;/ }; do
-  if [[ "$platform" == "standalone" ]]; then
-    echo ""
-    echo "###########################"
-    echo "#   Building Standalone   #"
-    echo "###########################"
-    echo ""
+  echo ""
+  echo "###########################"
+  echo "#   Testing in $platform  #"
+  echo "###########################"
+  echo ""
 
-    # Create directories if they do not exist
-    mkdir -p "$UNITY_PROJECT_PATH/Assets/Editor/"
-    mkdir -p "$UNITY_PROJECT_PATH/Assets/Player/"
-    # Copy the scripts
-    cp -R "$ACTION_FOLDER/UnityStandaloneScripts/Assets/Editor/" "$UNITY_PROJECT_PATH/Assets/Editor/"
-    cp -R "$ACTION_FOLDER/UnityStandaloneScripts/Assets/Player/" "$UNITY_PROJECT_PATH/Assets/Player/"
-    # Verify recursive paths
-    ls -Ralph "$UNITY_PROJECT_PATH/Assets/Editor/"
-    ls -Ralph "$UNITY_PROJECT_PATH/Assets/Player/"
-
-    runTests="-runTests -testPlatform StandaloneLinux64 -builtTestRunnerPath $UNITY_PROJECT_PATH/Build/UnityTestRunner-Standalone"
+  if [[ "$platform" == "customStandalone" ]]; then
+    runTests="-executeMethod TestModule.RunTestsByScript"
   else
-    echo ""
-    echo "###########################"
-    echo "#   Testing in $platform  #"
-    echo "###########################"
-    echo ""
-
-    if [[ "$platform" == "custom" ]]; then
-      runTests="-executeMethod TestModule.RunTestsByScript"
-    elif [[ "$platform" != "COMBINE_RESULTS" ]]; then
-      runTests="-runTests -testPlatform $platform -testResults $FULL_ARTIFACTS_PATH/$platform-results.xml"
-    else
-      runTests="-quit"
-    fi
+    runTests="-quit"
   fi
 
-  unity-editor \
-    -batchmode \
-    -logFile "$FULL_ARTIFACTS_PATH/$platform.log" \
-    -projectPath "$UNITY_PROJECT_PATH" \
-    -coverageResultsPath "$FULL_COVERAGE_RESULTS_PATH" \
-    $runTests \
-    -enableCodeCoverage \
-    -debugCodeOptimization \
-    -coverageOptions "$COVERAGE_OPTIONS" \
-    $CUSTOM_PARAMETERS
-
-  # Catch exit code
-  TEST_EXIT_CODE=$?
-
-  # Print unity log output
-  cat "$FULL_ARTIFACTS_PATH/$platform.log"
-
-  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "custom" ]]; then
+  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customStandalone" ]]; then
     if grep -q "ALL_TESTS_SUCCESSFUL" "$FULL_ARTIFACTS_PATH/$platform.log" && ! grep -q "TEST_FAILURE" "$FULL_ARTIFACTS_PATH/$platform.log"; then
         TEST_EXIT_CODE=0
     else
@@ -225,27 +200,31 @@ for platform in ${TEST_PLATFORMS//;/ }; do
     fi
   fi
 
-  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "standalone" ]]; then
+  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customStandalone" ]]; then
     echo ""
-    echo "###########################"
-    echo "#    Testing Standalone   #"
-    echo "###########################"
+    echo "##################################"
+    echo "#    Testing Custom Standalone   #"
+    echo "##################################"
     echo ""
 
     # Code Coverage currently only supports code ran in the Editor and not in Standalone/Player.
     # https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/TechnicalDetails.html#how-it-works
 
-    xvfb-run -a -e /dev/stdout "$UNITY_PROJECT_PATH/Build/UnityTestRunner-Standalone" \
+    xvfb-run -a -e /dev/stdout "$CUSTOM_BUILD_PATH" \
       -batchmode \
       -nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
-      -testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml"
+      -testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
+      $runTests 
 
     # Catch exit code
     TEST_EXIT_CODE=$?
 
     # Print player log output
     cat "$FULL_ARTIFACTS_PATH/$platform-player.log"
+  else
+    echo "We don't support other platforms yet"
+    TEST_EXIT_CODE=3
   fi
 
   # Display results
@@ -274,18 +253,6 @@ for platform in ${TEST_PLATFORMS//;/ }; do
   elif [[ "$platform" != "COMBINE_RESULTS" ]]; then
     cat "$FULL_ARTIFACTS_PATH/$platform-results.xml"
     cat "$FULL_ARTIFACTS_PATH/$platform-results.xml" | grep test-run | grep Passed
-  fi
-
-  if [[ -f "$UNITY_PROJECT_PATH/clone0.log" ]]; then
-    echo ""
-    echo "###########################"
-    echo "#         Clone 0         #"
-    echo "###########################"
-    echo ""
-  
-    cat "$UNITY_PROJECT_PATH/clone0.log"
-  else 
-    echo "clone0.log doesn't exist!";
   fi
 done
 
