@@ -196,9 +196,9 @@ for platform in ${TEST_PLATFORMS//;/ }; do
   echo ""
 
   if [[ "$platform" == "customstandalone" ]]; then
-    runTests="-executeMethod TestModule.RunTestsByScript"
+    runTests="--run-tests"
   else
-    runTests="-quit"
+    runTests="-executeMethod TestModule.RunTestsByScript"
   fi
 
   
@@ -206,6 +206,8 @@ for platform in ${TEST_PLATFORMS//;/ }; do
   if [[ "$platform" == "customstandalone" ]]; then
     # Code Coverage currently only supports code ran in the Editor and not in Standalone/Player.
     # https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/TechnicalDetails.html#how-it-works
+
+    
 
     xvfb-run -a -e /dev/stdout "$CUSTOM_BUILD_PATH/$BUILD_NAME" \
       -batchmode \
