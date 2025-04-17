@@ -22,7 +22,7 @@ else
   echo "Build dir permissions:"
   ls -l $BUILD_PATH_FULL
   echo "Change permissions"
-  chown -R $USER:$USER $BUILD_PATH_FULL
+  chown -R $(whoami):$(whoami) $BUILD_PATH_FULL
   ls -l $BUILD_PATH_FULL
 fi
 
