@@ -192,21 +192,9 @@ for platform in ${TEST_PLATFORMS//;/ }; do
     runTests="-quit"
   fi
 
-  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customstandalone" ]]; then
-    if grep -q "ALL_TESTS_SUCCESSFUL" "$FULL_ARTIFACTS_PATH/$platform.log" && ! grep -q "TEST_FAILURE" "$FULL_ARTIFACTS_PATH/$platform.log"; then
-        TEST_EXIT_CODE=0
-    else
-        TEST_EXIT_CODE=2
-    fi
-  fi
+  
 
-  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customstandalone" ]]; then
-    echo ""
-    echo "##################################"
-    echo "#    Testing Custom Standalone   #"
-    echo "##################################"
-    echo ""
-
+  if [[ "$platform" == "customstandalone" ]]; then
     # Code Coverage currently only supports code ran in the Editor and not in Standalone/Player.
     # https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/TechnicalDetails.html#how-it-works
 
@@ -219,6 +207,16 @@ for platform in ${TEST_PLATFORMS//;/ }; do
 
     # Catch exit code
     TEST_EXIT_CODE=$?
+
+    if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customstandalone" ]]; then
+      if grep -q "ALL_TESTS_SUCCESSFUL" "$FULL_ARTIFACTS_PATH/$platform-player.log" && ! grep -q "TEST_FAILURE" "$FULL_ARTIFACTS_PATH/$platform.log"; then
+          TEST_EXIT_CODE=0
+      else
+          TEST_EXIT_CODE=2
+      fi
+    fi
+
+    
 
     # Print player log output
     cat "$FULL_ARTIFACTS_PATH/$platform-player.log"
