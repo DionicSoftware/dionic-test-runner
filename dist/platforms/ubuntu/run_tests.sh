@@ -21,6 +21,9 @@ if [ ! -e "$BUILD_PATH_FULL" ]; then
 else 
   echo "Build dir permissions:"
   ls -l $BUILD_PATH_FULL
+  echo "Change permissions"
+  chown -R $USER:$USER $BUILD_PATH_FULL
+  ls -l $BUILD_PATH_FULL
 fi
 
 
@@ -205,7 +208,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
       -batchmode \
       -nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
-      -testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
+      #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
       $runTests 
 
     # Catch exit code
