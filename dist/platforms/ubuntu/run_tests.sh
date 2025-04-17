@@ -18,6 +18,9 @@ echo "Using build path \"$BUILD_PATH_FULL\"."
 if [ ! -e "$BUILD_PATH_FULL" ]; then
   echo "Couldn't find build from the build job! Aborting...."
   exit 420
+else 
+  echo "Build dir permissions:"
+  ls -l $BUILD_PATH_FULL
 fi
 
 
