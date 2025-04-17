@@ -186,13 +186,13 @@ for platform in ${TEST_PLATFORMS//;/ }; do
   echo "###########################"
   echo ""
 
-  if [[ "$platform" == "customStandalone" ]]; then
+  if [[ "$platform" == "customstandalone" ]]; then
     runTests="-executeMethod TestModule.RunTestsByScript"
   else
     runTests="-quit"
   fi
 
-  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customStandalone" ]]; then
+  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customstandalone" ]]; then
     if grep -q "ALL_TESTS_SUCCESSFUL" "$FULL_ARTIFACTS_PATH/$platform.log" && ! grep -q "TEST_FAILURE" "$FULL_ARTIFACTS_PATH/$platform.log"; then
         TEST_EXIT_CODE=0
     else
@@ -200,7 +200,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
     fi
   fi
 
-  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customStandalone" ]]; then
+  if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customstandalone" ]]; then
     echo ""
     echo "##################################"
     echo "#    Testing Custom Standalone   #"
