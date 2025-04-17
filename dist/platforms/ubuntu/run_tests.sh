@@ -211,14 +211,15 @@ for platform in ${TEST_PLATFORMS//;/ }; do
       -batchmode \
       -nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
-      #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
       $runTests 
+      #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
+      
 
     # Catch exit code
     TEST_EXIT_CODE=$?
 
-    if [[ $TEST_EXIT_CODE -eq 0 && "$platform" == "customstandalone" ]]; then
-      if grep -q "ALL_TESTS_SUCCESSFUL" "$FULL_ARTIFACTS_PATH/$platform-player.log" && ! grep -q "TEST_FAILURE" "$FULL_ARTIFACTS_PATH/$platform.log"; then
+    if [[ $TEST_EXIT_CODE -eq 0 ]]; then
+      if grep -q "ALL_TESTS_SUCCESSFUL" "$FULL_ARTIFACTS_PATH/$platform-player.log" && ! grep -q "TEST_FAILURE" "$FULL_ARTIFACTS_PATH/$platform-player.log"; then
           TEST_EXIT_CODE=0
       else
           TEST_EXIT_CODE=2
