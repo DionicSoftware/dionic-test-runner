@@ -24,6 +24,9 @@ else
   echo "Change permissions"
   chown -R $(whoami):$(whoami) $BUILD_PATH_FULL
   ls -l $BUILD_PATH_FULL
+
+  echo "Build contents:"
+  find $CUSTOM_BUILD_PATH -type f -exec ls -l {} \;
 fi
 
 
