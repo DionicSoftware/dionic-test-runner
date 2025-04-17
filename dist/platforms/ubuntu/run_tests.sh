@@ -207,7 +207,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
     # Code Coverage currently only supports code ran in the Editor and not in Standalone/Player.
     # https://docs.unity3d.com/Packages/com.unity.testtools.codecoverage@1.2/manual/TechnicalDetails.html#how-it-works
 
-    xvfb-run -a -e /dev/stdout "$CUSTOM_BUILD_PATH" \
+    xvfb-run -a -e /dev/stdout "$CUSTOM_BUILD_PATH/$BUILD_NAME" \
       -batchmode \
       -nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
