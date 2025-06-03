@@ -196,7 +196,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
   echo ""
 
   if [[ "$platform" == "customstandalone" ]]; then
-    runTests="--run-tests --path-to-old-saves $UNITY_PROJECT_PATH/ExplorersTestSaves/"
+    runTests="--run-tests --path-to-old-saves $UNITY_PROJECT_PATH/HavenCraftTestSaves/"
   else
     runTests="-executeMethod TestModule.RunTestsByScript"
   fi
