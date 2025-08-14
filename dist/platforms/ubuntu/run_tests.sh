@@ -211,7 +211,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
 
     xvfb-run -a -e /dev/stdout "$CUSTOM_BUILD_PATH/$BUILD_NAME" \
       -batchmode \
-      -nographics \
+      #-nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
       $runTests 
       #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
