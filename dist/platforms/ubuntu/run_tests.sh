@@ -8,7 +8,7 @@ UNITY_PROJECT_PATH="$GITHUB_WORKSPACE/$PROJECT_PATH"
 echo "Using project path \"$UNITY_PROJECT_PATH\"."
 
 BUILD_PATH="build"
-BUILD_NAME="StandaloneLinux64"
+BUILD_NAME="HavenCraft"
 BUILD_FILE="$BUILD_NAME"
 BUILD_PATH_FULL="$GITHUB_WORKSPACE/$BUILD_PATH" # TODO: pass the $BUILD_PATH from build job to here instead of its default value
 CUSTOM_BUILD_PATH="$BUILD_PATH_FULL/$BUILD_FILE"
