@@ -214,7 +214,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
       -nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
       $runTests \
-      $CustomParameters
+      $CUSTOM_PARAMETERS
       #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
       
 
