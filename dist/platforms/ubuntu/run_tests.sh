@@ -213,7 +213,8 @@ for platform in ${TEST_PLATFORMS//;/ }; do
       -batchmode \
       -nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
-      $runTests 
+      $runTests \
+      $CustomParameters
       #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
       
 
