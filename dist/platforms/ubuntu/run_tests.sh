@@ -212,11 +212,11 @@ for platform in ${TEST_PLATFORMS//;/ }; do
     xvfb-run -a -e /dev/stdout "$CUSTOM_BUILD_PATH/$BUILD_NAME" \
       -batchmode \
       -nographics \
-      #-logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
+      -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
       $runTests \
       $CUSTOM_PARAMETERS
       #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
-      | tee "$FULL_ARTIFACTS_PATH/$platform-player.log"
+      
       
 
     # Catch exit code
@@ -233,7 +233,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
     
 
     # Print player log output
-    #cat "$FULL_ARTIFACTS_PATH/$platform-player.log"
+    cat "$FULL_ARTIFACTS_PATH/$platform-player.log"
   else
     echo "We don't support other platforms yet"
     TEST_EXIT_CODE=3
