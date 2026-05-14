@@ -214,6 +214,7 @@ for platform in ${TEST_PLATFORMS//;/ }; do
       -nographics \
       -logFile "$FULL_ARTIFACTS_PATH/$platform-player.log" \
       $runTests \
+      --buildpipeline \
       $CUSTOM_PARAMETERS
       #-testResults "$FULL_ARTIFACTS_PATH/$platform-results.xml" \
       
@@ -234,6 +235,37 @@ for platform in ${TEST_PLATFORMS//;/ }; do
 
     # Print player log output
     cat "$FULL_ARTIFACTS_PATH/$platform-player.log"
+
+    # Print clone test logs
+    echo ""
+    echo "###########################"
+    echo "#    Clone Test Logs      #"
+    echo "###########################"
+    echo ""
+
+    declare -A seen_tests
+    for clone_log in "$GITHUB_WORKSPACE"/log_clone_*.txt; do
+      if [ ! -f "$clone_log" ]; then
+        echo "No clone logs found."
+        break
+      fi
+      filename=$(basename "$clone_log")
+      testName=$(echo "$filename" | sed 's/^log_clone_//' | sed 's/_[0-9]*\.txt$//')
+      if [ -z "${seen_tests[$testName]+x}" ]; then
+        seen_tests[$testName]=1
+        echo "####################################"
+        echo "Test: $testName"
+        echo "####################################"
+        echo ""
+        for test_log in "$GITHUB_WORKSPACE"/log_clone_${testName}_*.txt; do
+          if [ -f "$test_log" ]; then
+            echo "--- $(basename "$test_log") ---"
+            cat "$test_log"
+            echo ""
+          fi
+        done
+      fi
+    done
   else
     echo "We don't support other platforms yet"
     TEST_EXIT_CODE=3
