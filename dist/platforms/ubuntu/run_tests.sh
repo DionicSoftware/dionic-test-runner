@@ -244,11 +244,9 @@ for platform in ${TEST_PLATFORMS//;/ }; do
     echo ""
 
     declare -A seen_tests
-    for clone_log in "$GITHUB_WORKSPACE"/log_clone_*.txt; do
-      if [ ! -f "$clone_log" ]; then
-        echo "No clone logs found."
-        break
-      fi
+    found_any=false
+    while IFS= read -r -d '' clone_log; do
+      found_any=true
       filename=$(basename "$clone_log")
       testName=$(echo "$filename" | sed 's/^log_clone_//' | sed 's/_[0-9]*\.txt$//')
       if [ -z "${seen_tests[$testName]+x}" ]; then
@@ -257,15 +255,16 @@ for platform in ${TEST_PLATFORMS//;/ }; do
         echo "Test: $testName"
         echo "####################################"
         echo ""
-        for test_log in "$GITHUB_WORKSPACE"/log_clone_${testName}_*.txt; do
-          if [ -f "$test_log" ]; then
-            echo "--- $(basename "$test_log") ---"
-            cat "$test_log"
-            echo ""
-          fi
-        done
+        while IFS= read -r -d '' test_log; do
+          echo "--- $(basename "$test_log") ---"
+          cat "$test_log"
+          echo ""
+        done < <(find "$GITHUB_WORKSPACE" -type f -name "log_clone_${testName}_*.txt" -print0 2>/dev/null)
       fi
-    done
+    done < <(find "$GITHUB_WORKSPACE" -type f -name "log_clone_*.txt" -print0 2>/dev/null)
+    if [ "$found_any" = false ]; then
+      echo "No clone logs found."
+    fi
   else
     echo "We don't support other platforms yet"
     TEST_EXIT_CODE=3
